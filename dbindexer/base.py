@@ -39,14 +39,12 @@ class BaseDatabaseWrapper(object):
             pass
         self.ops.__class__ = Operations
         self.ops.__init__()
+from djangoappengine.db.base import DatabaseWrapper as DW
+class Wrapper(BaseDatabaseWrapper, DW):
+    pass
 
 def DatabaseWrapper(settings_dict, *args, **kwargs):
     target_settings = settings.DATABASES[settings_dict['TARGET']]
-    engine = target_settings['ENGINE'] + '.base'
-    target = import_module(engine).DatabaseWrapper
-    class Wrapper(BaseDatabaseWrapper, target):
-        pass
-
     # Update settings with target database settings (which can contain nested dicts).
     merged_settings = settings_dict.copy()
     merge_dicts(merged_settings, target_settings)
